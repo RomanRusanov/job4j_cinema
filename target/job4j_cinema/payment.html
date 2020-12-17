@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+</head>
+<body>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    var row;
+    var number;
+    function validate() {
+        var username = checkUserInput($('#username'));
+        var phone = checkUserInput($('#phone'));
+        if (username !== "" && phone !== "") {
+            executePay();
+            return true;
+        }
+        return false;
+    }
+    function checkUserInput(input) {
+        var currentInput = $(input).val();
+        if (currentInput === '' || currentInput === undefined) {
+            alert("Поле: "+ $(input).attr('placeholder') + " не заполнено");
+            return "";
+        }
+        return currentInput;
+    }
+    function displayRowAndPlaceNumber() {
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+        row = url.searchParams.get("row");
+        number = url.searchParams.get("number");
+        document.getElementById("header").textContent = "Вы выбрали ряд "
+            + row + " место " + number + ", Сумма : 500 рублей.";
+    }
+    function executePay() {
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:8080/cinema/hall',
+            data: {fio: $('#username').val(), phone: $('#phone').val(), rowVal: row, numberVal: number},
+            dataType: 'json'
+        }).done(function(data) {
+            alert("Ваша оплата успешно прошла ID: " + data.userId);
+            window.location.href = "http://localhost:8080/cinema/index.html";
+        }).fail(function(err){
+            alert("Оплата не прошла!" + err);
+        });
+    }
+    window.onload = displayRowAndPlaceNumber;
+</script>
+<div class="container">
+    <div class="row pt-3">
+        <h3 id="header">
+            Вы выбрали ряд 1 место 1, Сумма : 500 рублей.
+        </h3>
+    </div>
+    <div class="row">
+        <form action="<c:url value=/hall?">
+            <div class="form-group">
+                <label for="username">ФИО</label>
+                <input type="text" class="form-control" id="username" placeholder="ФИО" name="username">
+            </div>
+            <div class="form-group">
+                <label for="phone">Номер телефона</label>
+                <input type="text" class="form-control" id="phone" placeholder="Номер телефона" name="phone">
+            </div>
+            <button type="button" class="btn btn-success" onclick="return validate()">Оплатить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

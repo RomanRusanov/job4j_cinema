@@ -18,7 +18,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
-    // Validate user input.
     function validate() {
         var rowAndPlace = $('input[name="place"]:checked').val();
         if (rowAndPlace !== undefined) {
@@ -32,7 +31,9 @@
         alert("Выберите место!")
         return false;
     }
-    // Get request to DB what places not free.
+    function payment() {
+
+    }
     function hideOccupiedPlaces() {
         $.ajax({
             type: 'GET',
@@ -49,7 +50,6 @@
             alert(err);
         });
     }
-    // Update in DB table hall(id=1) fields free to true.
     function clearOccupiedPlace() {
         $.ajax({
             type: 'POST',
@@ -57,15 +57,14 @@
             success : function () {
                 $('input[name="place"]').removeAttr("disabled", "true");
             }
-        }).fail(function(err) {
+        }).fail(function(err){
             alert(err);
         });
     }
     window.onload = hideOccupiedPlaces;
-    //Refresh info about what places not free.
-    setInterval(function() {
-        hideOccupiedPlaces();},
-        5000);
+    setInterval(function(){
+        hideOccupiedPlaces();
+    }, 5000);
 </script>
 <div class="container">
     <div class="row pt-3">
